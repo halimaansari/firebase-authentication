@@ -3,121 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Form</title>
-   
+    <title>Registration Page</title>
+     <!-- SweetAlert2 CDN in the head -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.2/dist/sweetalert2.min.css">
+
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
-        body {
+        /* Global Reset */
+        * {
             margin: 0;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            background: url('https://e0.pxfuel.com/wallpapers/386/919/desktop-wallpaper-website-background-website-login-page-background.jpg') no-repeat center center fixed; /* Replace with your image URL */
-            background-size: cover;
-            animation: fadeIn 1s ease-in-out; 
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            width: 450px;
+            height: 100vh;
             position: relative;
-            z-index: 1; 
+            background: url("./assests/bg-img.jpeg") no-repeat center center fixed; /* Background image */
+            background-size: cover;
         }
 
-        h2 {
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;  
+            filter: blur(4px); 
+            z-index: -1; 
+        }
+
+      
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px 70px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 450px; 
+            width: 100%;
             text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-weight: bold;
+            box-sizing: border-box;
         }
 
+        .form-container h2 {
+            color: #2d7f3f; 
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 28px; 
+        }
+
+      
         .form-group {
             margin-bottom: 20px;
         }
 
         .form-control {
+            width: 100%;
+            padding: 18px;
             border-radius: 30px;
-            padding: 15px;
-            border: 2px solid #5f72be;
+            border: 2px solid #a5d6a7; 
+            background: #f1f8f6;
+            font-size: 16px;
+            color: #2d7f3f;
+            outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .form-control:focus {
-            border-color: #9921e8;
-            box-shadow: 0 0 8px rgba(153, 33, 232, 0.5);
+            border-color: #66bb6a; 
+            box-shadow: 0 0 8px rgba(102, 187, 106, 0.4); 
         }
 
+        
         button {
             width: 100%;
-            background: linear-gradient(90deg, #5f72be, #9921e8);
+            background: linear-gradient(90deg, #2d7f3f, #66bb6a);
             color: white;
             border: none;
             border-radius: 30px;
-            padding: 12px;
+            padding: 14px;
             font-weight: bold;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            font-size: 16px;
         }
 
         button:hover {
             transform: translateY(-2px);
-            background: linear-gradient(90deg, #9921e8, #5f72be);
+            background: linear-gradient(90deg, #66bb6a, #2d7f3f);
         }
 
-        button::after {
-            content: '';
-            position: absolute;
-            width: 300%;
-            height: 300%;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            transition: transform 0.4s;
-            z-index: 0;
-        }
-
-        button:hover::after {
-            transform: translate(-50%, -50%) scale(1);
-        }
-
+        
         .footer-text {
-            text-align: center;
             margin-top: 20px;
             font-size: 0.9em;
             color: #555;
         }
 
-        .form-check-label {
-            margin-right: 15px;
+        .footer-text a {
+            color: #2d7f3f;
+            text-decoration: none;
+            font-weight: bold;
         }
 
-        .form-check-inline {
-            margin-left: 10px;
+     
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 40px 50px;
+                max-width: 90%;
+            }
         }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <h2>Create Account</h2>
+    <!-- Main form container -->
+    <div class="form-container">
+        <h2>Create Your Account</h2>
 
         <form id="reg-form">
-            
-            
             <div class="form-group">
                 <input id="signupEmail" type="email" class="form-control" placeholder="Email" required>
             </div>
@@ -125,19 +138,17 @@
                 <input id="signupPassword" type="password" class="form-control" placeholder="Password" minlength="6" required>
             </div>
             
-            <button type="button" id="signupBtn" class="btn btn-primary">Sign-up</button>
-          </form>
-
-            <div class="footer-text">
-                Already have an account? <a href="signin.html">Login here</a>
-            </div>
+            <button type="button" id="signupBtn">Create Account</button>
         </form>
+
+        <div class="footer-text">
+            Already have an account? <a href="signin.html">Login here</a>
+        </div>
     </div>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+<!-- Include SweetAlert2 CDN in the head -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script  type="module" src="firebase.js"></script>
-
-    <script type="module" src="app.js" defer></script>
-    
 </body>
 </html>
-

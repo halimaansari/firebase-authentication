@@ -1,116 +1,115 @@
-import { getAuth, onAuthStateChanged, sendEmailVerification, updateProfile, signOut,} from "./firebase.js";
-  
-  const auth = getAuth();
-  let profilePage = document.getElementById("profile-page");
-  
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const uid = user.uid;
-      console.log(user);
-  
-      profilePage.innerHTML = `<div class="card mb-4">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <p class="mb-0">Full Name</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">${user.displayName}</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">
-                    Profile pic
-                    <img src="${user.photoURL}"   width="75px" /> 
-                    </p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3">
-                    <p class="mb-0">Email</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">${user.email}</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3">
-                    <p class="mb-0">Phone</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">(097) 234-5678</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3">
-                    <p class="mb-0">Mobile</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">(098) 765-4321</p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3">
-                    <p class="mb-0">Address</p>
-                  </div>
-                  <div class="col-sm-9">
-                    <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
-                  </div>
-                   <div class="col-sm-9">
-                    <p class="text-muted mb-0">${
-                      user.emailVerified ? "yes" : "no"
-                    }</p>
-                  </div>
-                </div>
-              </div>
-  
-              
-  <button type="button" class="btn btn-success" id="verifyEmail">Verify your email</button>
-            </div>
-            <button type="button" class="btn btn-success" id="updateProfile">Update profile</button>
-             <button type="button" class="btn btn-success" id="signOut">Sign Out</button>
-            </div>`;
-  
-      //   verifyEmail
-      document.getElementById("verifyEmail").addEventListener("click", () => {
-        sendEmailVerification(auth.currentUser).then(() => {
-          console.log("email has been sent");
+import { getAuth, onAuthStateChanged, sendEmailVerification, updateProfile, signOut } from "./firebase.js";
+
+const auth = getAuth();
+let profilePage = document.getElementById("profile-page");
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const uid = user.uid;
+    console.log(user);
+
+    const profilePic = user.photoURL || 'https://cdn-icons-png.flaticon.com/256/3135/3135823.png';  // Default image
+
+    profilePage.innerHTML = `
+      <div class="profile-card">
+        <img src="${profilePic}" class="profile-pic" alt="Profile Picture" />
+        <h2>${user.displayName || 'No Name Set'}</h2>
+
+        <div class="info-row">
+          <div><label>Email:</label></div>
+          <div>${user.email}</div>
+        </div>
+        <div class="info-row">
+          <div><label>Phone:</label></div>
+          <div>(097) 234-5678</div>
+        </div>
+        <div class="info-row">
+          <div><label>Address:</label></div>
+          <div>Bay Area, San Francisco, CA</div>
+        </div>
+        <div class="info-row">
+          <div><label>Email Verified:</label></div>
+          <div>${user.emailVerified ? "Yes" : "No"}</div>
+        </div>
+
+        <div class="card-footer">
+          <button type="button" class="btn-custom" id="verifyEmail">Verify Email</button>
+          <button type="button" class="btn-custom" id="updateProfile">Update Profile</button>
+          <button type="button" class="btn-custom" id="signOut">Sign Out</button>
+        </div>
+      </div>
+    `;
+
+    // Email verification
+    document.getElementById("verifyEmail").addEventListener("click", () => {
+      sendEmailVerification(auth.currentUser).then(() => {
+        console.log("Email verification has been sent.");
+        Swal.fire({
+          icon: 'info',
+          title: 'Verification Email Sent',
+          text: 'Please check your inbox to verify your email address.',
+        });
+      }).catch((error) => {
+        console.error("Error sending email verification:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to send verification email.',
         });
       });
-  
-      //   update profile
-  
-      document.getElementById("updateProfile").addEventListener("click", () => {
+    });
+
+    // Update profile
+    document.getElementById("updateProfile").addEventListener("click", () => {
+      const newDisplayName = prompt("Enter your new display name:", user.displayName || "User");
+      const newPhotoURL = prompt("Enter the URL of your new profile picture:", profilePic);
+
+      if (newDisplayName && newPhotoURL) {
         updateProfile(auth.currentUser, {
-          displayName: "ansari",
-          photoURL:
-            "https://cdn-icons-png.flaticon.com/256/3135/3135823.png",
+          displayName: newDisplayName,
+          photoURL: newPhotoURL,
         })
-          .then(() => {
-            console.log("update");
-          })
-          .catch((error) => {
-            console.log(error);
+        .then(() => {
+          console.log("Profile updated");
+          Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated',
+            text: 'Your profile has been successfully updated!',
           });
-      });
-  
-  
-      // sigh out 
-      document.getElementById("signOut").addEventListener("click", () => {
-          signOut(auth).then(() => {
-              console.log("user has been signed out");
-  
-              
-            }).catch((error) => {
-              console.log(error);
-              
-            });
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Profile Update Failed',
+            text: error.message,
+          });
         });
-  
-    } else {
-      console.log("user is logout out");
-    }
-  });
+      }
+    });
+
+    // Sign out
+    document.getElementById("signOut").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        console.log("User has been signed out");
+        Swal.fire({
+          icon: 'success',
+          title: 'Signed Out',
+          text: 'You have successfully signed out!',
+        });
+        window.location.href = 'signin.html'; // Redirect to signin page
+      }).catch((error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Sign Out Failed',
+          text: 'An error occurred while signing out.',
+        });
+      });
+    });
+
+  } else {
+    console.log("User is logged out");
+    window.location.href = 'signin.html'; // Redirect if not authenticated
+  }
+});

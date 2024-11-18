@@ -1,33 +1,90 @@
-import { signInWithEmailAndPassword, getAuth } from "./firebase.js";
+import { 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signInWithEmailAndPassword, 
+    getAuth, 
+   
+} from "./firebase.js";
 
 const auth = getAuth();
 
 document.addEventListener("DOMContentLoaded", () => {
-    let signInPassword = document.getElementById("signInPassword");
-    let signInEmail = document.getElementById("signInEmail");
-    let loginBtn = document.getElementById("loginBtn");
+    const signInPassword = document.getElementById("signInPassword");
+    const signInEmail = document.getElementById("signInEmail");
+    const loginBtn = document.getElementById("loginBtn");
+    const googleSignInBtn = document.getElementById("btn");
 
+    // Email/Password sign-in
     if (loginBtn) {
         loginBtn.addEventListener("click", () => {
-            if (signInEmail.value.trim() && signInPassword.value.trim()) {
-                signInWithEmailAndPassword(auth, signInEmail.value, signInPassword.value)
-                .then((userCredential) => {
-                    const user = userCredential.user;
+            const email = signInEmail.value.trim();
+            const password = signInPassword.value.trim();
+            
+            if (email && password) {
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        console.log(user);
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'You have logged in successfully!',
+                            icon: 'success',
+                            confirmButtonText: 'Proceed to Profile'
+                        }).then(() => {
+                            location.href = "profile.html";  // Redirect to profile page after successful login
+                        });
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.error("Error: ", errorCode, errorMessage);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Error during sign-in. Please check your credentials.',
+                            icon: 'error',
+                            confirmButtonText: 'Try Again'
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please provide both email and password.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
+    // Google Sign-In
+    if (googleSignInBtn) {
+        googleSignInBtn.addEventListener("click", () => {
+            const provider = new GoogleAuthProvider();
+
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
                     console.log(user);
-                    location.href = "profile.html";
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'You have logged in with Google successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'Proceed to Profile'
+                    }).then(() => {
+                        location.href = "profile.html";  // Redirect to profile page after successful Google sign-in
+                    });
                 })
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    console.log(errorCode);
-                    console.log(errorMessage);
+                    console.error("Google Sign-In Error: ", errorCode, errorMessage);
+                    Swal.fire({
+                        title: 'Google Sign-In Failed!',
+                        text: 'Google sign-in failed. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
                 });
-            } else {
-                console.log("Please insert your data");
-            }
         });
-    } else {
-        console.error("Login button not found!");
     }
 });
-
